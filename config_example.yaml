@@ -1,0 +1,7 @@
+name: Vim
+platform:
+    Windows:
+        src:
+            - .vimrc
+        dest:
+            - ~/.vimrc
