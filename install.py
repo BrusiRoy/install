@@ -25,7 +25,10 @@ def print_error(msg):
 
 class Config:
     """Represents an installation configuration"""
-    def __init__(self, config_file_path):
+    def __init__(self, root_path, file_name):
+        config_file_path = root_path + file_name
+        self.root_path = root_path
+
         # Load the config file
         with open(config_file_path, 'r') as stream:
             try:
@@ -68,7 +71,7 @@ class Config:
 
     def _convert_home_tilde(self):
         """Converts the '~' in the path by the actual HOME path"""
-        self.src = [src.replace('~', str(Path.home())) for src in self.src]
+        self.src = [self.root_path + src.replace('~', str(Path.home())) for src in self.src]
         self.dest = [dest.replace('~', str(Path.home())) for dest in self.dest]
 
     def _file_exists(self, src, dest):
@@ -99,6 +102,7 @@ class Config:
             else:
                 self._copy_file(src, dest)
 
-
-CONFIG = Config('config_example.yaml')
-CONFIG.install()
+for root, dirs, files in os.walk('dotfiles/'):
+    for file in files:
+        if 'install' in file and file.endswith('.yaml'):
+            Config(root + '/', file).install()
